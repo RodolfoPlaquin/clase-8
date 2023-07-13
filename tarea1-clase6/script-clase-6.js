@@ -1,89 +1,120 @@
-const $botonCrearFormulario = document.querySelector('#generar-formulario');
+function crearInputs(cantidad) {
+  const $form = document.querySelector("#formulario-calculos");
+  $form.innerHTML = "";
 
-$botonCrearFormulario.onclick = function (){
-    const cantidadMiembros = Number(document.querySelector('#cantidad-miembros-familia').value);
-    generarFormulario( cantidadMiembros );
-    
-    const $botonCalcularEdades = document.querySelector('#calcular-edad');
-    $botonCalcularEdades.onclick = function () {
-        const edadesFamiliares = arrayEdades (cantidadMiembros);
-        const edadPromedio = calcularEdadPromedio ( edadesFamiliares );
-        const edadMayor = Math.max(...edadesFamiliares);
-        const edadMenor = Math.min(...edadesFamiliares);
-    
-        mostrarEdades (edadMenor, edadMayor , edadPromedio);
+  for (let i = 1; i <= cantidad; i++) {
+    const crearLabel = document.createElement("label");
+    crearLabel.textContent = "Edad persona N°" + i + " :";
 
-        const $botonLimpiar = document.querySelector('#limpiar-formulario');
-        $botonLimpiar.onclick = function(){
-            const $cantidadMiembros = document.querySelector('#cantidad-miembros-familia');
-            $cantidadMiembros.value = "";
+    const crearInput = document.createElement("input");
+    crearInput.type = "number";
+    crearInput.name = "edad-familiar";
 
-            const $mostraredad = document.querySelector('#mostrar-resultados');
-            $mostraredad.style.display = 'none';
-            
-            const $formularioGenerado = document.querySelector('#formulario-calculos');
-            $formularioGenerado.innerHTML = "";
+    $form.appendChild(crearLabel);
+    $form.appendChild(crearInput);
+  }
 
-            return false;
-        }
-        return false;
-    }
+  crearBotones($form);
+}
+
+function crearBotones(form) {
+  const crearBotonCalcular = document.createElement("button");
+  crearBotonCalcular.id = "calcular-edad";
+  crearBotonCalcular.textContent = "Calcular";
+  form.appendChild(crearBotonCalcular);
+
+  const mostrarResultado = document.createElement("div");
+  mostrarResultado.id = "mostrar-resultados";
+  form.appendChild(mostrarResultado);
+
+  const crearBotonLimpiar = document.createElement("button");
+  crearBotonLimpiar.id = "limpiar-formulario";
+  crearBotonLimpiar.textContent = "Limpiar";
+  form.appendChild(crearBotonLimpiar);
+}
+
+function botonCalcular(cantidad) {
+  const $botonCalcularEdades = document.querySelector("#calcular-edad");
+  $botonCalcularEdades.onclick = function () {
+    const edadPromedio = calcularEdadPromedio(edadesFamiliares());
+    const edadMayor = Math.max(...edadesFamiliares());
+    const edadMenor = Math.min(...edadesFamiliares());
+
+    mostrarEdades(edadMenor, edadMayor, edadPromedio);
+    botonLimpiar(cantidad);
     return false;
-}
-    
-function generarFormulario ( cantidad ){
-    const $formularioGenerado = document.querySelector('#formulario-calculos');
-    $formularioGenerado.innerHTML = "";
-
-    for(let i = 1 ; i<=cantidad ; i++){
-        const crearLabel = document.createElement("label");
-        crearLabel.textContent = "Edad persona N°" + i + " :";
-        
-        const crearInput = document.createElement("input");
-        crearInput.type = "number";
-        crearInput.id = "edadFamiliar" + i;
-
-        $formularioGenerado.appendChild(crearLabel);
-        $formularioGenerado.appendChild(crearInput);
-    }
-
-    const crearBotonCalcular = document.createElement("button");
-    crearBotonCalcular.id = "calcular-edad";
-    crearBotonCalcular.textContent = "Calcular";
-    $formularioGenerado.appendChild(crearBotonCalcular);
-
-    const mostrarResultado = document.createElement("div");
-    mostrarResultado.id = "mostrar-resultados";
-    $formularioGenerado.appendChild(mostrarResultado);
-
-    const crearBotonLimpiar = document.createElement("button");
-    crearBotonLimpiar.id = "limpiar-formulario";
-    crearBotonLimpiar.textContent = "Limpiar";
-    $formularioGenerado.appendChild(crearBotonLimpiar);
+  };
 }
 
-function arrayEdades ( cantidad ){
-    let arrayEdades = [];
-    console.log(arrayEdades);
-    for(let i = 1 ; i<=cantidad ; i++){
-        const $edad = Number(document.querySelector("#edadFamiliar" + i).value);
-        arrayEdades.push($edad);
-    }
-    return arrayEdades;
+function botonLimpiar() {
+  const $botonLimpiar = document.querySelector("#limpiar-formulario");
+  $botonLimpiar.onclick = function () {
+    limpiarFormulario();
+    return false;
+  };
 }
 
-function calcularEdadPromedio ( arrayEdades ){
-    let sumatoriaEdades = 0;
-    for(let i = 0 ; i<arrayEdades.length ; i++){
-        sumatoriaEdades += arrayEdades[i];
-    }
-    const promedioEdades = sumatoriaEdades / arrayEdades.length;
-    return promedioEdades;
+function limpiarFormulario() {
+  const $inputCantidadMiembros = document.querySelector(
+    "#cantidad-miembros-familia"
+  );
+  $inputCantidadMiembros.value = "";
+
+  const $mostraredad = document.querySelector("#mostrar-resultados");
+  $mostraredad.style.display = "none";
+
+  const $formularioGenerado = document.querySelector("#formulario-calculos");
+  $formularioGenerado.innerHTML = "";
 }
 
-function mostrarEdades (min , max , promedio ){
-    const $mostraredad = document.querySelector('#mostrar-resultados');
-    $mostraredad.innerHTML = "Edad menor : " + min + "<br>" +
-                             "Edad mayor : " + max + "<br>" +
-                             "Edad promedio : " + promedio;
+function edadesFamiliares() {
+  let edades = [];
+  $edades = document.querySelectorAll("[name=edad-familiar]");
+  $edades.forEach((edad) => edades.push(Number(edad.value)));
+  return edades;
 }
+
+function calcularEdadPromedio(edades) {
+  let sumatoriaEdades = 0;
+  edades.forEach((edad) => (sumatoriaEdades += edad));
+
+  const promedioEdades = sumatoriaEdades / edades.length;
+  return promedioEdades;
+}
+
+function mostrarEdades(min, max, promedio) {
+  const $mostraredad = document.querySelector("#mostrar-resultados");
+  $mostraredad.innerHTML =
+    "Edad menor : " +
+    min +
+    "<br>" +
+    "Edad mayor : " +
+    max +
+    "<br>" +
+    "Edad promedio : " +
+    promedio;
+}
+
+const $botonCrearFormulario = document.querySelector("#generar-formulario");
+$botonCrearFormulario.onclick = function () {
+  const cantidadMiembros = document.querySelector(
+    "#cantidad-miembros-familia"
+  ).value;
+
+  const $errorFamiliares = validarCantidadFamiliares(cantidadMiembros);
+  const $mostrarErrorFamiliares = document.querySelector(
+    "#error-cantidad-familiares"
+  );
+
+  if ($errorFamiliares !== "") {
+    $mostrarErrorFamiliares.textContent = $errorFamiliares;
+    limpiarFormulario();
+  } else {
+    $mostrarErrorFamiliares.textContent = "";
+    crearInputs(Number(cantidadMiembros));
+    botonCalcular(Number(cantidadMiembros));
+    botonLimpiar();
+  }
+
+  return false;
+};
