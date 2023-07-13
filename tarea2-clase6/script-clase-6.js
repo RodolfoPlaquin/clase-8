@@ -1,9 +1,9 @@
 const $botonAgregarFamiliar = document.querySelector("#agregar-familiares");
 const $formularioSalarios = document.querySelector("#formulario-salarios");
 const $mostrarResultado = document.querySelector("#mostrar-resultado");
-$cantidadFamiliares = Number(
-  document.querySelector("#cantidad-integrantes").value
-);
+$cantidadFamiliares = document.querySelector("#cantidad-integrantes").value;
+console.log($cantidadFamiliares);
+
 function agregarFormulario(formulario, cantidadFamiliares) {
   formulario.innerHTML = "";
 
@@ -14,19 +14,10 @@ function agregarFormulario(formulario, cantidadFamiliares) {
     const $crearInput = document.createElement("input");
     $crearInput.id = "salario-familiar" + i;
 
-    const $divError = document.createElement("div");
-    $crearInput.id = "error-salario" + i;
-    $crearInput.className = "errores";
-
     const $crearBotonEliminarRegistro = document.createElement("button");
     $crearBotonEliminarRegistro.textContent = "Eliminar Registro";
     $crearBotonEliminarRegistro.addEventListener("click", () =>
-      eliminarRegistro(
-        $crearLabel,
-        $crearInput,
-        $divError,
-        $crearBotonEliminarRegistro
-      )
+      eliminarRegistro($crearLabel, $crearInput, $crearBotonEliminarRegistro)
     );
 
     formulario.appendChild($crearLabel);
@@ -35,54 +26,36 @@ function agregarFormulario(formulario, cantidadFamiliares) {
   }
 }
 
-function eliminarRegistro(label, input, div, button) {
+function eliminarRegistro(label, input, button) {
   label.remove();
   input.remove();
-  div.remove();
   button.remove();
-  cantidadFamiliares--;
+  $cantidadFamiliares--;
   $mostrarResultado.innerHTML = "";
-  if (cantidadFamiliares === 0) $generarFormulario.innerHTML = "";
-}
-
-function botonCalcular(formulario) {
-  if ($cantidadFamiliares > 0) {
-    const $crearBotonCalcular = document.createElement("button");
-    $crearBotonCalcular.id = "calcular-salarios";
-    $crearBotonCalcular.textContent = "Calcular";
-    formulario.appendChild($crearBotonCalcular);
-
-    $crearBotonCalcular.onclick = function () {
-      const salarios = obtenerSalarios();
-      const salarioPromedio = salarioPromedio(salarios).toFixed(2);
-      const salarioMaximo = salarioMaximo(salarios);
-      const salarioMinimo = salarioMinimo(salarios);
-      mostrarResultados(salarioPromedio, salarioMaximo, salarioMinimo);
-      return false;
-    };
-  }
+  if ($cantidadFamiliares === 0) $formularioSalarios.innerHTML = "";
 }
 
 function obtenerSalarios() {
   const salarios = [];
   const salarioInput = document.querySelectorAll("input");
-  for (let i = 0; i < cantidadFamiliares; i++) {
-    if (salarioInput[i].value > 0) {
-      salarios.push(salarioInput[i].value);
+  for (let i = 1; i <= $cantidadFamiliares; i++) {
+    console.log(Number(salarioInput[i].value));
+    if (Number(salarioInput[i].value > 0)) {
+      salarios.push(Number(salarioInput[i].value));
     }
   }
   return salarios;
 }
 
-function salarioMaximo(salarios) {
+function calcularSalarioMaximo(salarios) {
   return Math.max(...salarios);
 }
 
-function salarioMinimo(salarios) {
+function calcularSalarioMinimo(salarios) {
   return Math.min(...salarios);
 }
 
-function salarioPromedio(arraySalarios) {
+function calcularSalarioPromedio(arraySalarios) {
   let sumadorSalarios = 0;
   for (let i = 0; i < arraySalarios.length; i++) {
     sumadorSalarios += arraySalarios[i];
@@ -101,6 +74,24 @@ function mostrarResultados(promedio, max, min) {
     "<br>" +
     "El salario mínimo es: " +
     min;
+}
+
+function botonCalcular(formulario) {
+  if ($cantidadFamiliares > 0) {
+    const $crearBotonCalcular = document.createElement("button");
+    $crearBotonCalcular.id = "calcular-salarios";
+    $crearBotonCalcular.textContent = "Calcular";
+    formulario.appendChild($crearBotonCalcular);
+
+    $crearBotonCalcular.onclick = function () {
+      const salarios = obtenerSalarios();
+      const salarioPromedio = calcularSalarioPromedio(salarios).toFixed(2);
+      const salarioMaximo = calcularSalarioMaximo(salarios);
+      const salarioMinimo = calcularSalarioMinimo(salarios);
+      mostrarResultados(salarioPromedio, salarioMaximo, salarioMinimo);
+      return false;
+    };
+  }
 }
 
 $botonAgregarFamiliar.onclick = function () {
